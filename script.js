@@ -1,16 +1,28 @@
-const maze = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
-    [1,0,1,0,1,0,1,1,1,0,1,0,1,0,1],
-    [1,0,1,0,0,0,0,1,1,0,0,0,1,0,1],
-    [1,0,1,1,1,1,0,0,0,1,1,1,1,0,1],
-    [1,0,0,0,0,1,0,1,0,0,0,0,0,0,1],
-    [1,1,1,1,0,1,0,1,1,1,1,1,1,0,1],
-    [1,0,0,1,0,1,0,0,0,0,0,0,0,0,1],
-    [1,0,1,1,0,1,1,1,1,1,0,1,1,1,1],
-    [1,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,2,1]
-];
+let maze = [];
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array
+}
+
+function randomGenMaze(row, col) {
+    maze[row][col] = 0;
+    
+    let directions = shuffle([[-2, 0], [2, 0], [0, -2], [0, 2]]);
+    
+    for (let [directionRow, directionCol] of directions) {
+        let newRow = row + directionRow;
+        let newCol = col + directionCol;
+        
+        if (newRow > 0 && newRow < maze.length - 1 && newCol > 0 && newCol < maze[0].length - 1 && maze[newRow][newCol] === 1) {
+            maze[row + directionRow / 2][col + directionCol / 2] = 0;
+            randomGenMaze(newRow, newCol);
+        }
+    }   
+}
 
 const cellSize = 40;
 
@@ -37,8 +49,6 @@ function drawMaze() {
     }
 };
 
-drawMaze();
-
 let player = {
     row: 1,
     col: 1,
@@ -60,8 +70,6 @@ function render() {
     drawMaze();
     drawPlayer();
 };
-
-render();
 
 document.addEventListener("keydown", handleMovement);
 
@@ -103,28 +111,7 @@ function mazeSolved() {
     saveBestTime(finalTime);
 
     showCompletionMessage(finalTime);
-};
-
-function startRun() {
-    player.row = 1;
-    player.col = 1;
-
-    startTime = Date.now();
-    currentRunTime = 0;
-
-    document.getElementById("messageAfterCompletingMaze").hidden = true;
-
-    if (timerInterval) {
-        clearInterval(timerInterval);
-    }
-
-    timerInterval = setInterval(() => {
-        currentRunTime = (Date.now() - startTime) / 1000;
-        currentRunTimeP.textContent = "Your time: " + currentRunTime.toFixed(2) + "s";
-    }, 50);
-
-    render();
-};   
+};  
 
 let startTime = null;
 let timerInterval = null;
@@ -139,8 +126,15 @@ function startRun() {
     player.row = 1;
     player.col = 1;
 
+    maze = Array.from({ length: 15 }, () => Array(15).fill(1));
+    randomGenMaze(1, 1);
+    maze[maze.length - 2][maze[0].length - 2] = 2;
+    drawMaze();
+
     startTime = Date.now();
     currentRunTime = 0;
+
+    document.getElementById("messageAfterCompletingMaze").hidden = true;
 
     if (timerInterval) {
         clearInterval(timerInterval);
