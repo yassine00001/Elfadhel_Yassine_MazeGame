@@ -24,7 +24,7 @@ function randomGenMaze(row, col) {
     }   
 }
 
-const cellSize = 40;
+let cellSize = 40;
 
 const canvas = document.getElementById("mazeCanvas");
 const ctx = canvas.getContext("2d");
@@ -104,6 +104,9 @@ function handleMovement(event) {
 };
 
 function mazeSolved() {
+    player.row = maze.length - 1;
+    player.col = maze[player.row].length - 1 ;
+
     clearInterval(timerInterval);
 
     const finalTime = currentRunTime;
@@ -122,11 +125,28 @@ const currentRunTimeP = document.getElementById("currentRunTime");
 
 startRunButton.addEventListener("click", startRun);
 
+let rows = 15;
+let cols = 15;
+
+const difficulties = {
+    easy: 15,
+    medium: 25,
+    hard: 35
+};
+
 function startRun() {
+    const difficulty = document.getElementById("difficultySelect").value;
+    
+    rows = difficulties[difficulty];
+    cols = difficulties[difficulty];
+
+    cellSize = canvas.width / cols;
+
     player.row = 1;
     player.col = 1;
+    player.size = cellSize * 0.6;
 
-    maze = Array.from({ length: 15 }, () => Array(15).fill(1));
+    maze = Array.from({ length: rows }, () => Array(cols).fill(1));
     randomGenMaze(1, 1);
     maze[maze.length - 2][maze[0].length - 2] = 2;
     drawMaze();

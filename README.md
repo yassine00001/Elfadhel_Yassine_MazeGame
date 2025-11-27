@@ -4,3 +4,5 @@ Jeu de labyrinthe - Déplacement personnage avec flèches, atteindre sortie rapi
 A l'appui du bouton start une labyrinthe est generée à l'aléatoire à l'aide de l'algorithme DFS et un chrono se lance.
 
 Le chrono s'arretera en atteignant l'exit et le temps sera comparée avec le meilleur temps sauvegardé dans le localStorage s'il y en a un.
+
+J'ai ajouté des niveau de difficulté.
