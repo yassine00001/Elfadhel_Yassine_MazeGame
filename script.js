@@ -101,29 +101,11 @@ function handleMovement(event) {
     if (maze[newRow][newCol] === 2) {
         mazeSolved();
     }
-};
-
-function mazeSolved() {
-    player.row = maze.length - 1;
-    player.col = maze[player.row].length - 1 ;
-
-    clearInterval(timerInterval);
-
-    const finalTime = currentRunTime;
-
-    saveBestTime(finalTime);
-
-    showCompletionMessage(finalTime);
 };  
 
 let startTime = null;
 let timerInterval = null;
 let currentRunTime = 0;
-
-const startRunButton = document.getElementById("startRunButton");
-const currentRunTimeP = document.getElementById("currentRunTime");
-
-startRunButton.addEventListener("click", startRun);
 
 let rows = 15;
 let cols = 15;
@@ -134,9 +116,15 @@ const difficulties = {
     hard: 35
 };
 
+
+const startRunButton = document.getElementById("startRunButton");
+const currentRunTimeP = document.getElementById("currentRunTime");
+
+startRunButton.addEventListener("click", startRun);
+
 function startRun() {
     const difficulty = document.getElementById("difficultySelect").value;
-    
+
     rows = difficulties[difficulty];
     cols = difficulties[difficulty];
 
@@ -149,7 +137,7 @@ function startRun() {
     maze = Array.from({ length: rows }, () => Array(cols).fill(1));
     randomGenMaze(1, 1);
     maze[maze.length - 2][maze[0].length - 2] = 2;
-    drawMaze();
+    
 
     startTime = Date.now();
     currentRunTime = 0;
@@ -165,14 +153,20 @@ function startRun() {
         currentRunTimeP.textContent = "Your time: " + currentRunTime.toFixed(2) + "s";
     }, 50);
 
+    drawMaze();
     render();
+    updateFastestRun(); 
 }
 
 function saveBestTime(time) {
-    const best = localStorage.getItem("bestTime");
+    const difficulty = document.getElementById("difficultySelect").value;
+
+    const key = "bestTime_" + difficulty;
+
+    const best = localStorage.getItem(key);
 
     if (!best || time < parseFloat(best)) {
-        localStorage.setItem("bestTime", time);
+        localStorage.setItem(key, time);
     }
 };
 
@@ -180,25 +174,40 @@ const fastestRunP = document.getElementById("fastestRun");
 localStorage.removeItem("bestTime");
 
 function updateFastestRun() {
-    const best = localStorage.getItem("bestTime");
+    const difficulty = document.getElementById("difficultySelect").value;
+
+    const key = "bestTime_" + difficulty;
+
+    const best = localStorage.getItem(key);
 
     if (best) {
-        fastestRunP.textContent = "Fastest Run: " + parseFloat(best).toFixed(2) + "s";
+        fastestRunP.textContent = "Fastest for the " + difficulty +" Run: " + parseFloat(best).toFixed(2) + "s";
     } else {
-        fastestRunP.textContent = "Fastest Run: N/A";
+        fastestRunP.textContent = "Fastestfor the " + difficulty +" Run: N/A";
     }
 };
 
-updateFastestRun();
+document.getElementById("difficultySelect").addEventListener("change", updateFastestRun());
+
+function mazeSolved() {
+    clearInterval(timerInterval);
+
+    const finalTime = currentRunTime;
+
+    saveBestTime(finalTime);
+    showCompletionMessage(finalTime);
+    updateFastestRun();
+};
 
 function showCompletionMessage(time) {
     document.getElementById("congrats").textContent = "Dubs";
     document.getElementById("currentRunTime").textContent = "Your finalTime: " + time.toFixed(2) + "s";
 
-    const best = localStorage.getItem("bestTime");
-    const bestNum = best ? parseFloat(best) : Infinity;
-    document.getElementById("classement").textContent = (time <= bestNum) ? "New record!" : "Try again to beat the record!";
+    const difficulty = document.getElementById("difficultySelect").value;
+    const key = "bestTime_" + difficulty;
+    const best = parseFloat(localStorage.getItem(key) || Infinity);
+
+    document.getElementById("classement").textContent = time <= best ? "New record!" : "Try again!";
 
     document.getElementById("messageAfterCompletingMaze").hidden = false;
-    updateFastestRun();
 };
