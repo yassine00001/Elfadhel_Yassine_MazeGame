@@ -1,0 +1,30 @@
+.maze {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.path {
+    background-color: #4caf50;
+}
+
+.wall {
+    background-color: #f44336;
+}
+
+.start {
+    background-color: #2196F3;
+}
+
+.end {
+    background-color: #FF9800;
+}
