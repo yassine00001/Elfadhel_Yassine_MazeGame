@@ -14,5 +14,7 @@ Des petits bugs sont finalement fixéss et le fichier css finalisé et ajouté a
 Randomization du point de départ et l'exit qui seront à des extrêmes opposées 
 
 Ajout des commentaires au code
+
+FINALLY FREEDOM: final final commit inshallah (juste fixation quand le meilleur temps s'affiche (lors de l'appui sur start -> selection de la difficulté))
 =======
 https://yassine00001.github.io/Elfadhel_Yassine_MazeGame/

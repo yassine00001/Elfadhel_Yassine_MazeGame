@@ -38,12 +38,16 @@ function drawMaze() {
             let value = maze[row][col];
 
             if (value === 1) {
-                ctx.fillStyle = "black"; // mur est noir
-            } else if (value === 0) {
-                ctx.fillStyle = "white"; // route est blanche
-            } else if (value === 2) {
-                ctx.fillStyle = "green"; // exit en vert
-            }
+                ctx.fillStyle = "black"; 
+            } // mur est noir
+
+            else if (value === 0) {
+                ctx.fillStyle = "white";   
+            } // route est blanche  
+            
+            else if (value === 2) {
+                ctx.fillStyle = "green"; 
+            } // exit en vert
 
             ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize); // remplissage des cases avec leurs couleurs adéquates
             ctx.strokeStyle = "gray"; // les lignes de seperation des case est gris 
@@ -120,9 +124,11 @@ function handleMovement(event) {
 let startTime = null;
 let timerInterval = null;
 let currentRunTime = 0;
+
 // initialisation du nombre de case de la matrice du maze
 let rows = 15;
 let cols = 15;
+
 // attribution des valeurs (qui seront le nombres de cases de la matrice du labyrinthe) à chaque difficulté
 const difficulties = { 
     easy: 15,
@@ -145,16 +151,18 @@ function startRun() {
 
     cellSize = canvas.width / cols; // pour que le labyrinthe reste contenu dans le canvas
 
-    const startingPoint = shuffle([[1, 1], [1, cols - 2], [rows - 2, 1], [rows - 2, cols - 2]]); // pour randomizer la case de debut du player cette case est à l'une des quatre extreme du labyrinthe
-    const endPointRow = rows - (startingPoint[0][0] + 1); // les coordonnées du exit sont symetriques par rapport au centre du labyrinthe
-    const endPointCol = cols - (startingPoint[1][0] + 1); // par exemple quand le player sera à l'extreme haut-gauche l'exit sera bas-droite 
+    const startingPoint = [1, rows - 2, cols - 2]; // les coordonnées qui peuvent être celles de la ligne où colonnes du player 
+                                                   // avec toute combinaison 2 à 2 permet que le player debute à l'un des quatre extrême 
 
-    player.row = startingPoint[0][0]; // la ligne où le player debutera
-    player.col = startingPoint[1][0]; // la colonne où le player debutera
+    player.row = startingPoint[Math.floor(Math.random() * 3)]; // la ligne où le player debutera générée à l'aléatoire
+    player.col = startingPoint[Math.floor(Math.random() * 3)]; // la colonne où le player debutera générée à l'aléatoire
     player.size = cellSize * 0.6;
 
+    const endPointRow = rows - (player.row + 1); // les coordonnées du exit sont symetriques par rapport au centre du labyrinthe
+    const endPointCol = cols - (player.col + 1); // par exemple quand le player sera à l'extreme haut-gauche l'exit sera bas-droite
+
     maze = Array.from({ length: rows }, () => Array(cols).fill(1)); // au début le labyrinthe est initialisé sans route (la matrice n'est que des 1)  
-    randomGenMaze(startingPoint[0][0], startingPoint[1][0]); // à l'aide d'un algorithme DFS les routes seront "sculptés" dans le labyrinthe 
+    randomGenMaze(player.row, player.col); // à l'aide d'un algorithme DFS les routes seront "sculptés" dans le labyrinthe 
     maze[endPointRow][endPointCol] = 2; // l'exit est à l'extreme opposé de celui du player 
     
 
@@ -172,6 +180,7 @@ function startRun() {
         currentRunTimeP.textContent = "Your time: " + currentRunTime.toFixed(2) + "s";
     }, 50);
 
+    updateFastestRun(); // affichage du meilleur temps de la difficulté selectionnée
     drawMaze(); // le labyrinthe est generé à partir de la matrice
     render(); 
 }
@@ -216,7 +225,7 @@ function mazeSolved() {
 
     saveBestTime(finalTime); // update du meilleur temps s'il est battu
     showCompletionMessage(finalTime); // pop up du message d'achevement de la partie si le meilleur temps est battu ou pas
-    updateFastestRun(); // mise à jour de l'affichage du meilleur temps 
+    updateFastestRun(); // mise à jour de l'affichage du meilleur temps au cas où le meilleur temps est battu
 };
 
 function showCompletionMessage(time) {
@@ -235,3 +244,6 @@ document.getElementById("okBtn").addEventListener("click", () => {
     document.getElementById("messageAfterCompletingMaze").style.display = "none";
     gameFrozen = false;
 }); // tout est ignoré jusqu'à l'appui du bouton nice pour évité le lancement de partie au background ou autre bug
+
+document.getElementById("difficultySelect").addEventListener("change", updateFastestRun); // change l'affichage du meilleur temps lors de selection de la difficulté pour se préparer à le battre 
+                                                                                          // mais attention pas de generation du labyrinthe avant l'appui du start button sinon c'est de la triche
