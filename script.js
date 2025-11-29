@@ -1,5 +1,6 @@
-let maze = [];
+let maze = []; // inisialisation de la matice du labyrinthe
 
+// fonction pour mixer une matrice
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -8,23 +9,25 @@ function shuffle(array) {
     return array
 }
 
+// fonction DFS pour générer la matrice du maze à l'aléatoire 
 function randomGenMaze(row, col) {
-    maze[row][col] = 0;
+    maze[row][col] = 0; // la case initial dans la fonction est affectée la valeur zéro (path)
     
-    let directions = shuffle([[-2, 0], [2, 0], [0, -2], [0, 2]]);
+    let directions = shuffle([[-2, 0], [2, 0], [0, -2], [0, 2]]); // randomization de la direction
     
     for (let [directionRow, directionCol] of directions) {
-        let newRow = row + directionRow;
-        let newCol = col + directionCol;
+        let newRow = row + directionRow; // indice future colonne
+        let newCol = col + directionCol; // indice future ligne
         
+        // entre la case future et la courante la case entre eux, si elle n'est pas à l'extreme et est un mur, est sculpté en route (affectée la valeur 0)
         if (newRow > 0 && newRow < maze.length - 1 && newCol > 0 && newCol < maze[0].length - 1 && maze[newRow][newCol] === 1) {
-            maze[row + directionRow / 2][col + directionCol / 2] = 0;
-            randomGenMaze(newRow, newCol);
+            maze[row + directionRow / 2][col + directionCol / 2] = 0; // affectation de la valeur 0 après validation des conditions
+            randomGenMaze(newRow, newCol); // appelle de la fonction à elle même
         }
     }   
 }
 
-let cellSize = 40;
+let cellSize = 40; // initialiser la taille de chaque case en 40 pixels
 
 const canvas = document.getElementById("mazeCanvas");
 const ctx = canvas.getContext("2d");
@@ -35,26 +38,28 @@ function drawMaze() {
             let value = maze[row][col];
 
             if (value === 1) {
-                ctx.fillStyle = "black"; // Wall
+                ctx.fillStyle = "black"; // mur est noir
             } else if (value === 0) {
-                ctx.fillStyle = "white"; // Path
+                ctx.fillStyle = "white"; // route est blanche
             } else if (value === 2) {
-                ctx.fillStyle = "blue"; // Exit
+                ctx.fillStyle = "green"; // exit en vert
             }
 
-            ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
-            ctx.strokeStyle = "gray";
-            ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
+            ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize); // remplissage des cases avec leurs couleurs adéquates
+            ctx.strokeStyle = "gray"; // les lignes de seperation des case est gris 
+            ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize); // dessin des lignes de separation
         }
     }
 };
 
+// initialisation du player et sa position 
 let player = {
     row: 1,
     col: 1,
     size: cellSize * 0.6
 };
 
+// fonction pour dessiner le player dans la forme d'un cercle rouge
 function drawPlayer() {
     const x = player.col * cellSize + (cellSize - player.size) / 2;
     const y = player.row * cellSize + (cellSize - player.size) / 2;
@@ -71,17 +76,18 @@ function render() {
     drawPlayer();
 };
 
-document.addEventListener("keydown", handleMovement);
+document.addEventListener("keydown", handleMovement); // pour que le player réponds à l'appui des flèches du device
 
-let gameLocked = false;
-let gameFrozen = false;
+let gameFrozen = false; // initialisation de gameFrozen false pour pouvoir jouer la première partie
 
 function handleMovement(event) {
-    if (gameFrozen) return;
+    if (gameFrozen) return; // prevenir le player de mouvoir dans le background du pop up
 
+    // initialisation des prochaines coordonnées du player
     let newRow = player.row;
     let newCol = player.col;
 
+    // incrémentation de la coordonnées prochaines du player suivant la flèches appuite
     if (event.key === "ArrowUp") {
         newRow--;
     } else if (event.key === "ArrowDown") {
@@ -94,133 +100,138 @@ function handleMovement(event) {
         return;
     }
 
+    // collision (les coordonnées prochaines sont ignorée si le player va entrer dans un mur)
     if (maze[newRow][newCol] === 1) {
         return;
     }
-
+    // sinon les coordonnées sont affectées et sa position est changée
     player.row = newRow;
     player.col = newCol;
 
     render();
 
+    // si l'exit est atteinte lancement de la fonction mazeSolved
     if (maze[newRow][newCol] === 2) {
         mazeSolved();
     }
-};  
-
+}; 
+ 
+// initialisation des variables nécessaires du chrono 
 let startTime = null;
 let timerInterval = null;
 let currentRunTime = 0;
-
+// initialisation du nombre de case de la matrice du maze
 let rows = 15;
 let cols = 15;
-
-const difficulties = {
+// attribution des valeurs (qui seront le nombres de cases de la matrice du labyrinthe) à chaque difficulté
+const difficulties = { 
     easy: 15,
     medium: 25,
     hard: 35
 };
 
-
 const startRunButton = document.getElementById("startRunButton");
 const currentRunTimeP = document.getElementById("currentRunTime");
 
-startRunButton.addEventListener("click", startRun);
+startRunButton.addEventListener("click", startRun); // à l'appui de start la partie se lance
 
 function startRun() {
-    gameFrozen = false;
+    if (gameFrozen) return; // sinon en clickant sur start avant nice, le timer peut se lancer dans le popup sans pouvoir mouvoir le player
 
-    const difficulty = document.getElementById("difficultySelect").value;
+    const difficulty = document.getElementById("difficultySelect").value; // obtention de la taille du labyrinthe à partir de la difficulté selectionnée
 
-    rows = difficulties[difficulty];
+    rows = difficulties[difficulty]; // la taille du labyrinthe dependra de la difficulté selectionnée
     cols = difficulties[difficulty];
 
-    cellSize = canvas.width / cols;
+    cellSize = canvas.width / cols; // pour que le labyrinthe reste contenu dans le canvas
 
-    player.row = 1;
-    player.col = 1;
+    const startingPoint = shuffle([[1, 1], [1, cols - 2], [rows - 2, 1], [rows - 2, cols - 2]]); // pour randomizer la case de debut du player cette case est à l'une des quatre extreme du labyrinthe
+    const endPointRow = rows - (startingPoint[0][0] + 1); // les coordonnées du exit sont symetriques par rapport au centre du labyrinthe
+    const endPointCol = cols - (startingPoint[1][0] + 1); // par exemple quand le player sera à l'extreme haut-gauche l'exit sera bas-droite 
+
+    player.row = startingPoint[0][0]; // la ligne où le player debutera
+    player.col = startingPoint[1][0]; // la colonne où le player debutera
     player.size = cellSize * 0.6;
 
-    maze = Array.from({ length: rows }, () => Array(cols).fill(1));
-    randomGenMaze(1, 1);
-    maze[rows - 2][cols - 2] = 2;
+    maze = Array.from({ length: rows }, () => Array(cols).fill(1)); // au début le labyrinthe est initialisé sans route (la matrice n'est que des 1)  
+    randomGenMaze(startingPoint[0][0], startingPoint[1][0]); // à l'aide d'un algorithme DFS les routes seront "sculptés" dans le labyrinthe 
+    maze[endPointRow][endPointCol] = 2; // l'exit est à l'extreme opposé de celui du player 
     
 
-    startTime = Date.now();
+    startTime = Date.now(); 
     currentRunTime = 0;
 
     document.getElementById("messageAfterCompletingMaze").hidden = false;
-
+    // le chrono de la partie précédente est arrêté si cette dernière est interrompue par l'appui du bouton start avant d'atteindre l'exit
     if (timerInterval) {
         clearInterval(timerInterval);
     }
-
-    timerInterval = setInterval(() => {
+    // le chrono de cette partie se lance
+    timerInterval = setInterval(() => { 
         currentRunTime = (Date.now() - startTime) / 1000;
         currentRunTimeP.textContent = "Your time: " + currentRunTime.toFixed(2) + "s";
     }, 50);
 
-    drawMaze();
-    render();
-    updateFastestRun(); 
+    drawMaze(); // le labyrinthe est generé à partir de la matrice
+    render(); 
 }
 
 function saveBestTime(time) {
-    const difficulty = document.getElementById("difficultySelect").value;
+    // un meilleur temps est sauvegardé pour chaque difficulté
+    const difficulty = document.getElementById("difficultySelect").value; // récuperation de la difficulté
 
     const key = "bestTime_" + difficulty;
 
-    const best = localStorage.getItem(key);
-
+    const best = localStorage.getItem(key); // récuperation du meilleur temps pour la diffficulté selectionnée
+    // comparaison du temps courant avec le meilleur de cette difficulté 
     if (!best || time < parseFloat(best)) {
-        localStorage.setItem(key, time);
+        localStorage.setItem(key, time); // mise à jour du meilleur temps si le meilleur est battu
     }
 };
 
-const fastestRunP = document.getElementById("fastestRun");
+const fastestRunP = document.getElementById("fastestRun"); // recuperation de la paragraphe où s'affichera le meilleur temps
 
 function updateFastestRun() {
-    const difficulty = document.getElementById("difficultySelect").value;
+    const difficulty = document.getElementById("difficultySelect").value; // récuperation de la difficulté
 
     const key = "bestTime_" + difficulty;
 
-    const best = localStorage.getItem(key);
+    const best = localStorage.getItem(key); // récuperation du meilleur temps pour la diffficulté selectionnée
 
     if (best) {
-        fastestRunP.textContent = "Fastest for the " + difficulty +" Run: " + parseFloat(best).toFixed(2) + "s";
+        fastestRunP.textContent = "Fastest for the " + difficulty + " Run: " + parseFloat(best).toFixed(2) + "s"; // affichage du meilleur temps s'il existe au localStorage
     } else {
-        fastestRunP.textContent = "Fastestfor the " + difficulty +" Run: N/A";
+        fastestRunP.textContent = "Fastestfor the " + difficulty  + " Run: N/A"; // affichage de N/A si l'item n'existe pas encore au localStorage
     }
 };
 
-document.getElementById("difficultySelect").addEventListener("change", updateFastestRun());
+document.getElementById("difficultySelect").addEventListener("change", updateFastestRun()); // mise à jour de l'affichage du meilleur temps lors de la selection de difficulté
 
 function mazeSolved() {
-    clearInterval(timerInterval);
+    clearInterval(timerInterval); // lorsque l'exit est atteinte le chrono est stoppé
 
-    gameFrozen = true;
+    gameFrozen = true; // arrête le mouvement du player ou le lancement d'une nouvelle partie à l'appuoi de start dans la background du popup du completion message
 
     const finalTime = currentRunTime;
 
-    saveBestTime(finalTime);
-    showCompletionMessage(finalTime);
-    updateFastestRun();
+    saveBestTime(finalTime); // update du meilleur temps s'il est battu
+    showCompletionMessage(finalTime); // pop up du message d'achevement de la partie si le meilleur temps est battu ou pas
+    updateFastestRun(); // mise à jour de l'affichage du meilleur temps 
 };
 
 function showCompletionMessage(time) {
-    document.getElementById("congrats").textContent = "Dubs";
-    document.getElementById("currentRunTime").textContent = "Your finalTime: " + time.toFixed(2) + "s";
+    document.getElementById("congrats").textContent = "Dubs"; // affichage de dubs
+    document.getElementById("currentRunTime").textContent = "Your finalTime: " + time.toFixed(2) + "s"; // affichage du temps faits pour atteindre l'exit
 
-    const difficulty = document.getElementById("difficultySelect").value;
+    const difficulty = document.getElementById("difficultySelect").value; // recuperation de la difficulté
     const key = "bestTime_" + difficulty;
-    const best = parseFloat(localStorage.getItem(key) || Infinity);
+    const best = parseFloat(localStorage.getItem(key) || Infinity); // pour initialiser le temps de la première partie dans cette difficulté comme le meilleur en le comparant à l'infini due à l'abscence de meilleur temps de parties précédentes
+    document.getElementById("classement").textContent = (best && time <= parseFloat(best)) ? "New record!" : "Try again!"; // si le meilleur temps est battu affichage de "New record" sinon "Try again"
 
-    document.getElementById("classement").textContent = (best && time <= parseFloat(best)) ? "New record!" : "Try again!";
-
-    document.getElementById("messageAfterCompletingMaze").style.display = "block";
+    document.getElementById("messageAfterCompletingMaze").style.display = "block"; // style du pop up
 };
 
 document.getElementById("okBtn").addEventListener("click", () => {
     document.getElementById("messageAfterCompletingMaze").style.display = "none";
-    gameLocked = false;
-});
+    gameFrozen = false;
+}); // tout est ignoré jusqu'à l'appui du bouton nice pour évité le lancement de partie au background ou autre bug

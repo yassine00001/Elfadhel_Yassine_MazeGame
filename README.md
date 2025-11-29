@@ -10,5 +10,9 @@ J'ai ajouté des niveau de difficulté.
 J'ai ajouté un chrono pour chaque niveau de difficulté.
 
 Des petits bugs sont finalement fixéss et le fichier css finalisé et ajouté au repertoire.
+
+Randomization du point de départ et l'exit qui seront à des extrêmes opposées 
+
+Ajout des commentaires au code
 =======
 https://yassine00001.github.io/Elfadhel_Yassine_MazeGame/
