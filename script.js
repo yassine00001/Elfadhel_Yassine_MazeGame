@@ -73,7 +73,12 @@ function render() {
 
 document.addEventListener("keydown", handleMovement);
 
+let gameLocked = false;
+let gameFrozen = false;
+
 function handleMovement(event) {
+    if (gameFrozen) return;
+
     let newRow = player.row;
     let newCol = player.col;
 
@@ -123,6 +128,8 @@ const currentRunTimeP = document.getElementById("currentRunTime");
 startRunButton.addEventListener("click", startRun);
 
 function startRun() {
+    gameFrozen = false;
+
     const difficulty = document.getElementById("difficultySelect").value;
 
     rows = difficulties[difficulty];
@@ -136,13 +143,13 @@ function startRun() {
 
     maze = Array.from({ length: rows }, () => Array(cols).fill(1));
     randomGenMaze(1, 1);
-    maze[maze.length - 2][maze[0].length - 2] = 2;
+    maze[rows - 2][cols - 2] = 2;
     
 
     startTime = Date.now();
     currentRunTime = 0;
 
-    document.getElementById("messageAfterCompletingMaze").hidden = true;
+    document.getElementById("messageAfterCompletingMaze").hidden = false;
 
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -171,7 +178,6 @@ function saveBestTime(time) {
 };
 
 const fastestRunP = document.getElementById("fastestRun");
-localStorage.removeItem("bestTime");
 
 function updateFastestRun() {
     const difficulty = document.getElementById("difficultySelect").value;
@@ -192,6 +198,8 @@ document.getElementById("difficultySelect").addEventListener("change", updateFas
 function mazeSolved() {
     clearInterval(timerInterval);
 
+    gameFrozen = true;
+
     const finalTime = currentRunTime;
 
     saveBestTime(finalTime);
@@ -207,7 +215,12 @@ function showCompletionMessage(time) {
     const key = "bestTime_" + difficulty;
     const best = parseFloat(localStorage.getItem(key) || Infinity);
 
-    document.getElementById("classement").textContent = time <= best ? "New record!" : "Try again!";
+    document.getElementById("classement").textContent = (best && time <= parseFloat(best)) ? "New record!" : "Try again!";
 
-    document.getElementById("messageAfterCompletingMaze").hidden = false;
+    document.getElementById("messageAfterCompletingMaze").style.display = "block";
 };
+
+document.getElementById("okBtn").addEventListener("click", () => {
+    document.getElementById("messageAfterCompletingMaze").style.display = "none";
+    gameLocked = false;
+});
