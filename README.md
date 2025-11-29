@@ -18,5 +18,7 @@ Ajout des commentaires au code
 FINALLY FREEDOM: final final commit inshallah (juste fixation quand le meilleur temps s'affiche (lors de l'appui sur start -> selection de la difficulté))
 
 beautification du code
+
+PLUS DE BEAUTIFICATION (important de minimiser les lignes)
 =======
 https://yassine00001.github.io/Elfadhel_Yassine_MazeGame/

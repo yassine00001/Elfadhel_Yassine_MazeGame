@@ -37,17 +37,11 @@ function drawMaze() {
         for (let col = 0; col < maze[row].length; col++) {
             let value = maze[row][col];
 
-            if (value === 1) {
-                ctx.fillStyle = "black"; 
-            } // mur est noir
+            if (value === 1) ctx.fillStyle = "black"; // mur est noir
 
-            else if (value === 0) {
-                ctx.fillStyle = "white";   
-            } // route est blanche  
+            else if (value === 0) ctx.fillStyle = "white"; // route est blanche  
             
-            else if (value === 2) {
-                ctx.fillStyle = "green"; 
-            } // exit en vert
+            else ctx.fillStyle = "green"; // exit en vert (j'ai affecté a cette case 2 mais oublié où et il est temps de dodo)
 
             ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize); // remplissage des cases avec leurs couleurs adéquates
             ctx.strokeStyle = "gray"; // les lignes de seperation des case est gris 
