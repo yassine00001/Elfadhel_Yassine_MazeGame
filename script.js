@@ -92,17 +92,15 @@ function handleMovement(event) {
     let newCol = player.col;
 
     // incrémentation de la coordonnées prochaines du player suivant la flèches appuite
-    if (event.key === "ArrowUp") {
-        newRow--;
-    } else if (event.key === "ArrowDown") {
-        newRow++;
-    } else if (event.key === "ArrowLeft") {
-        newCol--;
-    } else if (event.key === "ArrowRight") {
-        newCol++;
-    } else {
-        return;
-    }
+    if (event.key === "ArrowUp") newRow--; // haut
+
+    else if (event.key === "ArrowDown") newRow++; // bas
+
+    else if (event.key === "ArrowLeft") newCol--; // gauche
+
+    else if (event.key === "ArrowRight") newCol++; // droite
+
+    else return; // sinon rien
 
     // collision (les coordonnées prochaines sont ignorée si le player va entrer dans un mur)
     if (maze[newRow][newCol] === 1) {
