@@ -252,6 +252,8 @@ function resizeCanvas() {
 
     // recalculer la taille de chaque cellule
     cellSize = canvas.width / cols;
+    // recalculer la taille du player
+    player.size = cellSize * 0.6;
 
     // redessiner tous
     render();
