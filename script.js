@@ -125,7 +125,8 @@ let cols = 15;
 const difficulties = { 
     easy: 15,
     medium: 25,
-    hard: 35
+    hard: 35,
+    extreme: 55
 };
 
 const startRunButton = document.getElementById("startRunButton");
