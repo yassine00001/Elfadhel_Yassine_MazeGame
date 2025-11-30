@@ -1,24 +1,55 @@
 # Elfadhel_Yassine_MazeGame
-Jeu de labyrinthe - Déplacement personnage avec flèches, atteindre sortie rapidement. Score et meilleur temps locaux. Animations CSS pour transitions et mouvements. Travail sur DOM et événements clavier.
+Maze The Game:
+Un mini-jeu de labyrinthe généré procéduralement, où le joueur doit atteindre la sortie le plus rapidement possible. Le jeu enregistre également les meilleurs temps pour chaque difficulté.
 
-A l'appui du bouton start une labyrinthe est generée à l'aléatoire à l'aide de l'algorithme DFS et un chrono se lance.
+Description du projet:
+    Maze The Game est une application web qui génère un labyrinthe aléatoire grâce à un algorithme DFS.
+    Le joueur, représenté par un cercle rouge, doit se déplacer à travers les chemins pour atteindre la sortie.
+    Le jeu inclut plusieurs niveaux de difficulté et mémorise les meilleurs temps à l’aide du localStorage.
 
-Le chrono s'arretera en atteignant l'exit et le temps sera comparée avec le meilleur temps sauvegardé dans le localStorage s'il y en a un.
+Technologies utilisées:
+    HTML: Structure et canvas du jeu
+    CSS: Mise en page et design responsive
+    JavaScript:
+        - Algorithme DFS pour générer le labyrinthe
+        - Déplacement du joueur et détection des collisions
+        - Chronomètre en temps réel
+        - Stockage des records dans le localStorage
+        - Gestion d’un canvas responsive
+        - Popup de fin de partie
 
-J'ai ajouté des niveau de difficulté.
+Fonctionnalités principales:
+    - Génération aléatoire du labyrinthe
+    - Déplacement du joueur avec les flèches du clavier
+    - Chronomètre intégré
+    - Sauvegarde du meilleur temps pour chaque difficulté
+    - Popup de fin de partie avec temps final et message indicatif
+    - Canvas responsive (s'adapte à la fenêtre)
+    - 4 niveaux de difficulté : Easy, Medium, Hard, Extreme
 
-J'ai ajouté un chrono pour chaque niveau de difficulté.
+Nouveautés explorées:
+    - Compréhension et implémentation du DFS (Depth-First Search)
+    - Génération procédurale sur une matrice 2D
+    - Dessin dynamique avec le Canvas HTML
+    - Calcul du temps via Date.now()
+    - Manipulation du localStorage
+    - Gestion du responsive d’un canvas avec recalcul de résolution
+    - Mise en place d'une logique de jeu complète (collision, victoire, popup, freeze des interactions)
 
-Des petits bugs sont finalement fixéss et le fichier css finalisé et ajouté au repertoire.
+Difficultés rencontrées:
+    - Gestion correcte des limites du labyrinthe pendant le DFS
+    - Problèmes de canvas qui se déformait lorsque la fenêtre changeait de taille
+    - Timer qui continuait après la victoire
+    - Association d’un record unique pour chaque difficulté
+    - Correction du placement du joueur et des coordonnées de la sortie
 
-Randomization du point de départ et l'exit qui seront à des extrêmes opposées 
+Solutions apportées:
+    - Vérifications strictes des limites dans le DFS
+    - Recalcul complet du cellSize, du joueur et du canvas lors d’un redimensionnement
+    - Ajout de clearInterval() pour stopper correctement le timer
+    - Utilisation de clés uniques dans le storage: bestTime_easy, bestTime_medium, etc.
+    - Gestion d'un freeze (gameFrozen) pour empêcher le joueur de bouger pendant le popup
+    - Recalcul des coordonnées du joueur et de la sortie pour éviter les erreurs d’index
 
-Ajout des commentaires au code
-
-FINALLY FREEDOM: final final commit inshallah (juste fixation quand le meilleur temps s'affiche (lors de l'appui sur start -> selection de la difficulté))
-
-beautification du code
-
-PLUS DE BEAUTIFICATION (important de minimiser les lignes)
 =======
 https://yassine00001.github.io/Elfadhel_Yassine_MazeGame/
