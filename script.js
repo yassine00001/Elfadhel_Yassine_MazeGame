@@ -204,7 +204,7 @@ function updateFastestRun() {
     if (best) {
         fastestRunP.textContent = "Fastest for the " + difficulty + " Run: " + parseFloat(best).toFixed(2) + "s"; // affichage du meilleur temps s'il existe au localStorage
     } else {
-        fastestRunP.textContent = "Fastestfor the " + difficulty  + " Run: N/A"; // affichage de N/A si l'item n'existe pas encore au localStorage
+        fastestRunP.textContent = "Fastest for the " + difficulty  + " Run: N/A"; // affichage de N/A si l'item n'existe pas encore au localStorage
     }
 };
 
