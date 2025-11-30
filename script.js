@@ -27,7 +27,7 @@ function randomGenMaze(row, col) {
     }   
 }
 
-let cellSize = 40; // initialiser la taille de chaque case en 40 pixels
+let cellSize = 50; // initialiser la taille de chaque case en 40 pixels
 
 const canvas = document.getElementById("mazeCanvas");
 const ctx = canvas.getContext("2d");
@@ -175,6 +175,7 @@ function startRun() {
     updateFastestRun(); // affichage du meilleur temps de la difficulté selectionnée
     drawMaze(); // le labyrinthe est generé à partir de la matrice
     render(); 
+    resizeCanvas();
 }
 
 function saveBestTime(time) {
@@ -239,3 +240,22 @@ document.getElementById("okBtn").addEventListener("click", () => {
 
 document.getElementById("difficultySelect").addEventListener("change", updateFastestRun); // change l'affichage du meilleur temps lors de selection de la difficulté pour se préparer à le battre 
                                                                                           // mais attention pas de generation du labyrinthe avant l'appui du start button sinon c'est de la triche
+
+function resizeCanvas() {
+    // recuperer la taille visuelle du css
+    const displayWidth = canvas.clientWidth;
+    const displayHeight = canvas.clientWidth; // pour que le canvas reste carré
+
+    // mise à jour de la resolution
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+
+    // recalculer la taille de chaque cellule
+    cellSize = canvas.width / cols;
+
+    // redessiner tous
+    render();
+}
+
+// adapte la taille du canvas au changement de la taille de la tab
+window.addEventListener("resize", resizeCanvas);

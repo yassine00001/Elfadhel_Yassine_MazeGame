@@ -10,6 +10,9 @@ body {
     margin: 20px auto;
     background: #fff;
     border: 3px solid #444;
+    width: 90vw;
+    max-width: 750px;
+    height: auto;
 }
 
 #fastestRun {
